@@ -18,13 +18,17 @@ netpot_angle=45;
 wall_thickness = 4;
 
 // Uncomment the part you want to generate/render below.
+// The tower and spacer pieces are the only height-adjustable ones,
 //stackable_tower();
-//end_cap();
-//end_cap(cord_holes=false);
-//end_cap(cord_holes=false,tube_hole=false);
-//cap_insert();
 //spacer();
 //spacer(holes=false);
+
+// These are always the same height
+//end_cap();
+//end_cap(cord_holes=false);
+//end_cap(tube_hole=false);
+//end_cap(cord_holes=false,tube_hole=false);
+//cap_insert();
 
 // DO NOT TOUCH ANYTHING BELOW THIS LINE
 
@@ -33,11 +37,12 @@ mm_per_inch = 25.4;
 outside_diameter = mm_per_inch*piece_diameter; // Schedule 40 3" PVC is 3.5" OD, 3.068" ID
 
 // Height of the mounting lip on bottom (or recess on top)
+lip_upper_h = mm_per_inch*0.375;
 lip_h = mm_per_inch*lip_height;
 lip_d = outside_diameter - wall_thickness;
 lip_r = lip_d/2;
 
-cyl_height = mm_per_inch*tower_piece_height-lip_h;
+cyl_height = (mm_per_inch*tower_piece_height)-lip_h;
 
 
 outside_radius = outside_diameter/2;
@@ -57,8 +62,8 @@ cap_h = mm_per_inch*0.125;
 cap_d = outside_diameter;
 cap_r = cap_d/2;
 
-// Spacer total height is 1.5", including lip
-spacer_h = mm_per_inch*1.5-lip_h;
+// Spacer total height including lip
+spacer_h = cyl_height;
 
 module stackable_tower() {
   difference() {
@@ -66,23 +71,25 @@ module stackable_tower() {
     union() {
       // outside cylinder
       translate([0,0,lip_h])
-        cylinder(h=cyl_height-lip_h, r=outside_radius);
+        cylinder(h=cyl_height, r=outside_radius);
       // Create netpot cylinder
-      translate([outside_diameter/2,0,cyl_height/2+3])
+      translate([outside_diameter/2,0,cyl_height/2+lip_h-2])
         rotate([0,netpot_angle,0]) 
         cylinder(h=netpot_height,r=netpot_outside_radius,center=true);
       // Bottom lip
       cylinder(h=lip_h, r=lip_r);
     }
-    // top lip for mounting
-    translate([0,0,cyl_height-lip_h])
-      cylinder(h=lip_h, r=lip_r);
     // Netpot negative space
-    translate([outside_diameter/2,0,cyl_height/2+3])
+    translate([outside_diameter/2,0,cyl_height/2+lip_h-2])
       rotate([0,netpot_angle,0])
-      cylinder(h=netpot_height,r=netpot_inside_radius,center=true);
+      cylinder(h=netpot_height+2,r=netpot_inside_radius,center=true);
     // vertical cylinder negative space
-    cylinder(h=cyl_height+2*lip_h, r=inside_radius);
+    color("red")
+      cylinder(h=cyl_height+lip_h, r=inside_radius);
+    // top lip for mounting
+    translate([0,0,cyl_height+lip_h-lip_upper_h])
+      color("blue")
+      cylinder(h=lip_upper_h+1, r=lip_r);
   }
 }
 
@@ -144,16 +151,20 @@ module spacer(holes=true) {
       // Bottom lip
       cylinder(h=lip_h, r=lip_r);
     }
-    cylinder(h=spacer_h+lip_h, r=inside_radius);
+    color("red")
+      cylinder(h=spacer_h+lip_h*2, r=inside_radius);
+
     // top lip for mounting
-    translate([0,0,spacer_h])
-      cylinder(h=lip_h, r=lip_r);
+    translate([0,0,spacer_h+lip_h-lip_upper_h])
+      color("blue")
+      cylinder(h=lip_upper_h*2, r=lip_r);
 
     if (holes) {
       // 1/4" holes for parachute cord
       translate([0,0,(spacer_h+lip_h)/2])
+        color("blue")
         rotate([0,90,0])
-        cylinder(h=cyl_height,r=mm_per_inch*0.25/2,center=true);
+        cylinder(h=outside_diameter,r=mm_per_inch*0.25/2,center=true);
     }
 
   }

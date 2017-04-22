@@ -30,7 +30,7 @@ Videos showing Larry's process are available here:
 I don't currently really have any future plans, but it would be nice to turn this repository into a holding place for anything 3D printable related to hydroponics, aquaponics, or any kind of ponic. :)
 
 ### License
-Because I'd like this to be the ultimate repository for 3D Printable Hydroponic/Aquaponic parts, everything in this repo is goverened under the GNU Affero GPL v3. You are of course free to print the resulting parts to sell or give away as you see fit.
+Everything in this repo is licensed under the BSD 2-Clause license. You're free to do whatever you want with the files in this repo, except remove the copyright headers or claim the work as your own.
 
 ### TL;DR
 Sorry, no tl;dr. There's too much good info that you should read.
